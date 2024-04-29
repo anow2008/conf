@@ -1,0 +1,54 @@
+#!/bin/sh
+########################################
+###### Powered by NewNigma2 Team  ######
+###      http://newngima2.to       ###
+########################################
+ 
+ 
+EMUNAME="OScam"
+
+remove_tmp ()
+{
+        [ -e /tmp/ecm.info ] && rm -rf /tmp/ecm.info
+        [ -e /tmp/ecm0.info ] && rm -rf /tmp/ecm0.info
+        [ -e /tmp/ecm1.info ] && rm -rf /tmp/ecm1.info
+        [ -e /tmp/.oscam ] && rm -rf /tmp/.oscam
+        [ -e /tmp/oscam.log ] && rm -rf /tmp/oscam.log
+        [ -e /tmp/oscam.kill ] && rm -rf /tmp/oscam.kill
+        [ -e /tmp/oscamuser.log ] && rm -rf /tmp/oscamuser.log
+}
+
+case "$1" in
+        start)
+                echo "[SCRIPT] $1: $EMUNAME"
+                if [ -f /usr/keys/oscam.conf ]; then
+                        /usr/bin/oscam -c /usr/keys >/dev/null &
+                else
+                        /usr/bin/oscam -c /etc/tuxbox/config >/dev/null &
+                fi
+                ;;
+        stop)
+                echo "[SCRIPT] $1: $EMUNAME"
+                echo -n "kill " > /tmp/oscam.kill
+                pidof oscam >> /tmp/oscam.kill
+                echo sleep 1s >> /tmp/oscam.kill
+                echo -n "kill -9 " >> /tmp/oscam.kill
+                pidof oscam >> /tmp/oscam.kill
+                chmod 755 /tmp/oscam.kill
+                /tmp/oscam.kill
+                sleep 2
+                remove_tmp
+                ;;
+        restart)
+                $0 stop
+                sleep 1
+                $0 start
+                exit 1
+                ;;
+        *)
+                $0 stop
+                exit 1
+                ;;
+esac
+
+exit 0
