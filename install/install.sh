@@ -1,22 +1,27 @@
 #!/bin/sh
 
-# تحديد المسارات
+# مسار مجلد الإعدادات في الرسيفر
 OSCAM_PATH="/etc/tuxbox/config"
+
+# رابط المستودع (المجلد الرئيسي)
 REPO_URL="https://raw.githubusercontent.com/anow2008/conf/main"
 
 echo "------------------------------------------"
-echo "  جاري تحميل وتحديث ملفات OSCam من GitHub"
+echo "  جاري تحديث كافة ملفات OSCam من GitHub"
 echo "------------------------------------------"
 
-# تحميل الملفات الأساسية (تأكد من وجود هذه الملفات في المستودع)
-wget -q "-O" "$OSCAM_PATH/oscam.conf" "$REPO_URL/oscam.conf"
-wget -q "-O" "$OSCAM_PATH/oscam.server" "$REPO_URL/oscam.server"
-wget -q "-O" "$OSCAM_PATH/oscam.user" "$REPO_URL/oscam.user"
-wget -q "-O" "$OSCAM_PATH/oscam.dvbapi" "$REPO_URL/oscam.dvbapi"
+# قائمة الملفات اللي هتتحمل (زي اللي في الصورة)
+FILES="constant.cw oscam.conf oscam.dvbapi oscam.provid oscam.services oscam.srvid oscam.server oscam.user"
 
-# إعطاء تصريح القراءة والكتابة للملفات (644)
+for FILE in $FILES; do
+    echo "جاري تحميل: $FILE ..."
+    wget -q "-O" "$OSCAM_PATH/$FILE" "$REPO_URL/$FILE"
+done
+
+# ضبط تصاريح الملفات (644) للقراءة والكتابة
 chmod 644 $OSCAM_PATH/oscam.*
+chmod 644 $OSCAM_PATH/constant.cw
 
-echo ">>> تم تحديث الملفات بنجاح في المسار: $OSCAM_PATH"
-echo ">>> يرجى عمل Restart للـ OSCam لتفعيل التعديلات."
+echo "------------------------------------------"
+echo "✅ تم تحديث جميع الملفات بنجاح!"
 echo "------------------------------------------"
