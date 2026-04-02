@@ -13,9 +13,19 @@
 #                                                                               #
 # Line Enable/Disable =? (" # ")                                                #
 #################################################################################
-#
-#http://www.freecline.com/companies/Bis_TV
-# etc...
 ####### preset servers #########
-##    SERVER0 to SERVER20     ##
-################################
+##    SERVER0 to ## preset servers #########
+#     SERVER0 to SERVER9  #
+############################
+
+#SERVER0
+
+### Need to be fix
+#https://cccamx.com/free-cccam
+#http://server.satunivers.tv
+#https://www.cccambird.com/freecccam.php
+#https://www.cccamprime.com/cccam48h.php
+#http://cccameurop.com/freetest.php
+#https://cccamiptv.co/free-cccam/
+#Thisis to test the server line
+#https://testcline.com
