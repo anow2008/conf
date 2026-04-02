@@ -1,31 +1,32 @@
 #!/bin/sh
 
-# مسار مجلد الإعدادات في الرسيفر
+# مسار الإعدادات في الرسيفر
 OSCAM_PATH="/etc/tuxbox/config"
 
-# رابط المجلد الرئيسي للمستودع
-REPO_URL="https://raw.githubusercontent.com/anow2008/conf/main"
+# بيانات المستودع بتاعك
+USER="anow2008"
+REPO="conf"
+BRANCH="main"
 
 echo "------------------------------------------"
-echo "  جاري تحديث الملفات المحددة في الصورة"
+echo "  جاري فحص المستودع وتحميل كافة الملفات"
 echo "------------------------------------------"
 
-# القائمة دي مطابقة تماماً للصورة (6 ملفات فقط)
-FILES="constant.cw oscam.conf oscam.dvbapi oscam.provid oscam.services oscam.srvid"
+# خطوة ذكية: بجيب قائمة بأسماء الملفات اللي في المجلد الرئيسي فقط (بدون الفولدرات)
+FILES=$(wget -qO- "https://api.github.com/repos/$USER/$REPO/contents?ref=$BRANCH" | grep '"name":' | sed 's/.*"name": "\(.*\)".*/\1/' | grep -v "install")
 
 for FILE in $FILES; do
-    echo "جاري تحميل: $FILE ..."
-    wget -q "-O" "$OSCAM_PATH/$FILE" "$REPO_URL/$FILE"
+    # التأكد إننا بنحمل ملفات مش فولدرات (عشان نتجنب المشاكل)
+    if [ "$FILE" != "README.md" ] && [ "$FILE" != ".github" ]; then
+        echo "جاري تحميل: $FILE ..."
+        wget -q "-O" "$OSCAM_PATH/$FILE" "https://raw.githubusercontent.com/$USER/$REPO/$BRANCH/$FILE"
+    fi
 done
 
-# ضبط تصاريح الملفات عشان تشتغل صح
-chmod 644 $OSCAM_PATH/oscam.conf
-chmod 644 $OSCAM_PATH/oscam.dvbapi
-chmod 644 $OSCAM_PATH/oscam.provid
-chmod 644 $OSCAM_PATH/oscam.services
-chmod 644 $OSCAM_PATH/oscam.srvid
-chmod 644 $OSCAM_PATH/constant.cw
+# ضبط التصاريح لكل الملفات اللي بدأت بـ oscam أو constant
+chmod 644 $OSCAM_PATH/oscam.* 2>/dev/null
+chmod 644 $OSCAM_PATH/constant.cw 2>/dev/null
 
 echo "------------------------------------------"
-echo "✅ تم التحديث بنجاح! الملفات الآن مطابقة لـ GitHub"
+echo "✅ تم تحديث كل شيء موجود في المستودع بنجاح!"
 echo "------------------------------------------"
